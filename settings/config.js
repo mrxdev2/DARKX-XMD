@@ -1,68 +1,75 @@
 "use strict";
 
 /**
- * Project: DarkX Ultra
- * Owner: MrX Dev
- * Configuration File with Session ID Support
+ * Project: DarkX-Ultra
+ * Base / default configuration.
+ *
+ * NOTE: these are just the defaults used the very first time a number is
+ * connected. Once a number is linked, its real settings (owner number,
+ * owner name, bot name, status emojis, anti-link, etc.) live in
+ * sessionSettings.json via library/settingsStore.js, and can be changed
+ * any time from the web settings panel. That per-number data always wins
+ * over the defaults below.
  */
 
 module.exports = {
     // --- BASIC BOT INFO ---
-    botName: "DarkX Ultra",
-    ownerName: "MrX Dev",
-    ownerNumber: "255775710774",
+    botName: "DarkX-Ultra",
+    ownerName: "Owner",
+    ownerNumber: "",
     prefix: ".",
-    
-    // --- SESSION MANAGEMENT ---
-    SESSION_ID: process.env.SESSION_ID || "DarkX-Ultra~WEKA_ID_YAKO_HAPA", 
+
+    // --- SESSION MANAGEMENT (legacy single-session support) ---
+    SESSION_ID: process.env.SESSION_ID || "",
     sessionName: "session",
-    
+
     // --- BOT MODES & BEHAVIOR ---
     public: true,
     online: true,
-    
+
     // --- SECURITY & LIMITS ---
     limitCount: 20,
     adminOnly: false,
-    
-    // ============================================
-    // ===== ANTI-DELETE FEATURE =====
-    // ============================================
-    antiDelete: false,              // true: Detect deleted messages | false: Ignore
-    antiDeleteNotifyOwner: false,   // true: Send report to owner | false: Don't
-    
-    // ============================================
-    // ===== AUTO FEATURES - ZOTE ZIMETENGWA =====
-    // ============================================
-    
+    WARN_COUNT: 3,
+
+    // --- ANTI-DELETE FEATURE (default OFF until enabled) ---
+    antiDelete: false,
+    antiDeleteNotifyOwner: true,
+
+    // --- ANTI-LINK FEATURE (default OFF until enabled) ---
+    antilink: false,
+
     // --- AUTO STATUS FEATURES ---
     autoViewStatus: true,
     autoReactStatus: true,
-    
+    statusEmojis: ["🔥", "💎", "💜", "❤️", "💙", "💚", "💖"],
+
     // --- AUTO CHAT FEATURES ---
     autoReadChat: false,
-    autoReactChat: false,
-    
+    autoReactChat: true,
+    chatEmojis: ["😆", "😱", "😂", "🤫", "👍"],
+
     // --- AUTO PRESENCE FEATURES ---
     autoTyping: true,
     autoRecording: false,
-    
+
     // --- AUTO AI FEATURES ---
     autoAi: false,
-    
+
     // --- VISUALS & METADATA ---
     version: "6.0.0",
     worktype: "public",
-    footer: "© 2026 DarkX Ultra - Developed by MrX Dev",
+    watermark: "DarkX-Ultra",
+    footer: "© 2026 DarkX-Ultra",
     thumb: "https://telegra.ph/file/a0f3d45e45c71b6d05494.jpg",
-    
-    // --- MESSAGES ---
+
+    // --- MESSAGES (English) ---
     msg: {
-        owner: "🚫 Amri hii ni kwa ajili ya *MrX Dev* pekee!",
-        group: "👥 Samahani, hii amri inafanya kazi kwenye Magroup tu.",
-        admin: "👮 Amri hii inahitaji uwe *Admin* wa group.",
-        botAdmin: "🤖 Tafadhali nifanye niwe *Admin* kwanza ili nitekeleze hili.",
-        wait: "⏳ *DarkX Ultra inashughulikia...* Tafadhali subiri.",
-        error: "❌ *Error!* Kuna hitilafu imetokea kwenye mfumo."
-    }
+        owner: "🚫 This command can only be used by the bot owner!",
+        group: "👥 Sorry, this command only works in groups.",
+        admin: "👮 This command requires you to be a group *Admin*.",
+        botAdmin: "🤖 Please make me an *Admin* first so I can do this.",
+        wait: "⏳ *DarkX-Ultra is processing...* Please wait.",
+        error: "❌ *Error!* Something went wrong in the system.",
+    },
 };
