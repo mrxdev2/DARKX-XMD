@@ -29,13 +29,13 @@ const SURAH_NAMES = {
 module.exports = {
     command: ['quran', 'ayah', 'surah'],
     category: 'religious',
-    description: 'Tafuta aya za Quran kwa namba au neno',
+    description: 'Search Quran verses by number or keyword',
     execute: async (sock, m, { text, reply }) => {
         const BASE = 'https://api.alquran.cloud/v1';
         const input = text.trim();
 
         if (!input) {
-            return reply(`📖 *Quran Menu*\n\n*1. Kwa Aya:* .quran 2:255\n*2. Kwa Surah:* .quran 112\n*3. Search:* .quran paradise`);
+            return reply(`📖 *Quran Menu*\n\n*1. By Verse:* .quran 2:255\n*2. By Surah:* .quran 112\n*3. Search:* .quran paradise`);
         }
 
         try {
@@ -59,7 +59,7 @@ module.exports = {
                     `📍 Juz: ${ar.juz} | Page: ${ar.page}`;
 
                 await reply(quranText);
-                // Kutuma audio ya aya
+                // Send the verse audio
                 await sock.sendMessage(m.chat, { audio: { url: audioUrl }, mimetype: 'audio/mp4', ptt: true }, { quoted: m });
             } 
             // Case 2: Full Surah (mfano: .quran 112)
@@ -81,7 +81,7 @@ module.exports = {
                 const res = await axios.get(`${BASE}/search/${encodeURIComponent(input)}/all/en`);
                 const matches = res.data.data.matches;
 
-                if (!matches || matches.length === 0) return reply(`❌ Sikuweza kupata aya yenye neno: *${input}*`);
+                if (!matches || matches.length === 0) return reply(`❌ Could not find a verse containing: *${input}*`);
 
                 const results = matches.slice(0, 5).map(m => {
                     const sName = SURAH_NAMES[m.surah.number] || m.surah.englishName;
@@ -92,7 +92,7 @@ module.exports = {
             }
         } catch (e) {
             console.error(e);
-            reply("❌ Hitilafu imetokea. Hakikisha namba ya surah/aya ipo sahihi.");
+            reply("❌ An error occurred. Please check the surah/verse number.");
         }
     }
 };

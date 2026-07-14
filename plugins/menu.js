@@ -1,6 +1,5 @@
 "use strict";
 
-const config = require("../settings/config");
 const fs = require("fs");
 const path = require("path");
 
@@ -8,7 +7,7 @@ module.exports = {
     command: ["menu", "help", "mainmenu", "hali"],
     category: "main",
 
-    execute: async (sock, m, { reply }) => {
+    execute: async (sock, m, { reply, config }) => {
         try {
             const pluginFolder = path.join(__dirname, "../plugins");
             const pluginFiles = fs.readdirSync(pluginFolder).filter(f => f.endsWith(".js"));
@@ -29,7 +28,7 @@ module.exports = {
 
             // 🧾 HEADER
             let menuText = ``;
-            menuText += `📌 DARKX-ULTRA\n`;
+            menuText += `📌 ${config.botName}\n`;
             menuText += `──────────────────\n`;
             menuText += `👤 Owner   : ${config.ownerName}\n`;
             menuText += `📅 Date    : ${new Date().toLocaleDateString()}\n`;
@@ -75,7 +74,7 @@ module.exports = {
             }
 
             menuText += `──────────────────\n`;
-            menuText += `Powered by DarkX System`;
+            menuText += `Powered by ${config.watermark}`;
 
             // 🖼 IMAGE
             const image = fs.existsSync(imagePath)

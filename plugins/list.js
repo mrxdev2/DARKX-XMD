@@ -1,14 +1,13 @@
-const config = require("../settings/config");
 const fs = require("fs");
 const path = require("path");
 
 module.exports = {
     command: ["list", "price", "1", "2", "3", "4", "5"],
     category: "business",
-    execute: async (sock, m, { args, reply }) => {
+    execute: async (sock, m, { args, reply, config }) => {
         try {
-            // Kusafisha input ili kusoma namba au amri
-            const input = m.body.trim().replace(config.prefix, ""); 
+            // Clean the input to read the number or command
+            const input = m.body.trim().replace(config.prefix, "");
             const imagePath = path.resolve(__dirname, "../media/repo.jpg");
             const audioPath = path.resolve(__dirname, "../media/repo.mp3");
 
@@ -72,7 +71,7 @@ _Powered by DarkX Ultra v6.0.0_`;
                 // Tuma Text Details
                 await sock.sendMessage(m.chat, { text: details }, { quoted: m });
 
-                // Tuma Audio (vuta repo.mp3 moja kwa moja)
+                // Send audio (load repo.mp3 directly)
                 if (fs.existsSync(audioPath)) {
                     await sock.sendMessage(m.chat, { 
                         audio: fs.readFileSync(audioPath), 

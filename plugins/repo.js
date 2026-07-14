@@ -1,4 +1,3 @@
-const config = require("../settings/config");
 const fs = require("fs");
 const path = require("path");
 
@@ -6,16 +5,15 @@ module.exports = {
     command: ["repo", "script", "sc"],
     category: "INFO",
 
-    execute: async (sock, m, { reply }) => {
+    execute: async (sock, m, { reply, config }) => {
         try {
             const imagePath = path.join(__dirname, "../media/repo.jpg");
             const audioPath = path.join(__dirname, "../media/repo.mp3");
 
-            // LINK MPYA YA HEROKU INAYOBAKIZA REPO/SCRIPT YA BOT
-            const repoLink = "https://darkx-xmd-ba2ddf4dd246.herokuapp.com/";
-            const ownerNumber = "255775710774";
-            const ownerName = "MrX Dev";
-            const botName = "DarkX Ultra 👑";
+            const repoLink = "https://github.com/darkx-pro/DarkX-Ultra.git";
+            const ownerNumber = config.ownerNumber;
+            const ownerName = config.ownerName;
+            const botName = `${config.botName} 👑`;
 
             // SEND AUDIO FIRST
             if (fs.existsSync(audioPath)) {
@@ -55,7 +53,7 @@ module.exports = {
 *╰━━━━━━━━━━━━━━━━━━⬣*
 
 *╭━━━〔 📂 REPOSITORY 📂 〕━━━⬣*
-*┃ 🔗 Web Script:*
+*┃ 🔗 GitHub Script:*
 ${repoLink}
 *╰━━━━━━━━━━━━━━━━━━⬣*
 
@@ -63,19 +61,20 @@ ${repoLink}
 `;
 
             // SEND IMAGE + INFO
+            const imageBuffer = fs.existsSync(imagePath) ? fs.readFileSync(imagePath) : null;
             await sock.sendMessage(
                 m.chat,
                 {
-                    image: fs.readFileSync(imagePath),
+                    image: imageBuffer || { url: "https://files.catbox.moe/pc5uec.png" },
                     caption: caption,
                     contextInfo: {
                         forwardingScore: 999,
                         isForwarded: true,
                         externalAdReply: {
-                            title: "DARKX ULTRA 👑",
+                            title: "DARKX-ULTRA 👑",
                             body: "Official Repository & Bot Info",
                             mediaType: 1,
-                            thumbnail: fs.readFileSync(imagePath),
+                            thumbnail: imageBuffer || undefined,
                             sourceUrl: repoLink,
                             renderLargerThumbnail: true,
                             showAdAttribution: true

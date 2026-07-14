@@ -4,10 +4,14 @@ module.exports = {
     isAdmin: true,
     isBotAdmin: true,
     execute: async (sock, m, { reply }) => {
-        let users = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : null;
-        if (!users) return reply("Tag au quote mtu unayetaka nimtoe!");
-        
-        await sock.groupParticipantsUpdate(m.chat, [users], "remove");
-        reply("✅ Target ametolewa!");
+        let target = m.mentionedJid?.[0] || (m.quoted ? m.quoted.sender : null);
+        if (!target) return reply("Tag or reply to the person you want me to remove!");
+
+        try {
+            await sock.groupParticipantsUpdate(m.chat, [target], "remove");
+            reply(`✅ @${target.split('@')[0]} has been removed.`);
+        } catch (e) {
+            reply("❌ Failed to remove that member. Make sure I'm an admin.");
+        }
     }
 };

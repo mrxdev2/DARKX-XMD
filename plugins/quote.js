@@ -11,7 +11,7 @@ module.exports = {
             let text = `“${content}”\n\n— *${author}*`;
             await sock.sendMessage(m.chat, { text: text }, { quoted: m });
         } catch (e) {
-            await sock.sendMessage(m.chat, { text: "Kuna tatizo kidogo, jaribu tena baadae." });
+            await sock.sendMessage(m.chat, { text: "A small problem occurred, please try again later." });
         }
     }
 };

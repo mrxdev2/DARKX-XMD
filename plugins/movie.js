@@ -9,7 +9,7 @@ module.exports = {
         const input = text.trim();
 
         if (!input) {
-            return reply(`🎬 *Movie Info*\n\n*Matumizi:* .movie <jina la muvi>\n*Mfano:* .movie Avengers`);
+            return reply(`🎬 *Movie Info*\n\n*Usage:* .movie <movie name>\n*Example:* .movie Avengers`);
         }
 
         await sock.sendMessage(m.chat, { react: { text: '🔍', key: m.key } });
@@ -26,7 +26,7 @@ module.exports = {
             const res = await axios.get(url);
             let data = res.data;
 
-            // Kama haijaonekana kwa jina kamili, jaribu kutafuta (Search)
+            // If not found by exact name, try a search
             if (data.Response === 'False') {
                 const searchRes = await axios.get(`https://www.omdbapi.com/?s=${encodeURIComponent(title)}&apikey=${OMDB_KEY}`);
                 if (searchRes.data.Response === 'True') {
@@ -37,7 +37,7 @@ module.exports = {
             }
 
             if (data.Response === 'False') {
-                return reply(`❌ Sikuweza kupata muvi iitwayo: *${input}*`);
+                return reply(`❌ Could not find a movie called: *${input}*`);
             }
 
             // Kutengeneza mastaa ya rating (IMDB Stars)
@@ -58,7 +58,7 @@ module.exports = {
                 `🔗 https://www.imdb.com/title/${data.imdbID}\n\n` +
                 `*DarkX-Mini Movie Search*`;
 
-            // Kutuma picha (Poster) pamoja na maelezo
+            // Send the poster image along with details
             if (data.Poster && data.Poster !== 'N/A') {
                 await sock.sendMessage(m.chat, { 
                     image: { url: data.Poster }, 
@@ -72,7 +72,7 @@ module.exports = {
 
         } catch (error) {
             console.error('Movie Error:', error);
-            reply(`❌ Hitilafu imetokea: ${error.message}`);
+            reply(`❌ An error occurred: ${error.message}`);
         }
     }
 };

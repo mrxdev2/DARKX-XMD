@@ -1,7 +1,7 @@
 module.exports = {
     command: ["groupinfo", "gcinfo"],
     execute: async (sock, m, args) => {
-        if (!m.isGroup) return sock.sendMessage(m.chat, { text: "Amri hii inafanya kazi kwenye magroup pekee!" });
+        if (!m.isGroup) return sock.sendMessage(m.chat, { text: "This command only works in groups!" });
         
         try {
             const groupMetadata = await sock.groupMetadata(m.chat);
@@ -9,7 +9,7 @@ module.exports = {
             const admins = participants.filter(p => p.admin !== null).length;
             
             let info = `乂  *G R O U P  I N F O* 乂\n\n`;
-            info += `📌 *Jina:* ${groupMetadata.subject}\n`;
+            info += `📌 *Name:* ${groupMetadata.subject}\n`;
             info += `🆔 *ID:* ${groupMetadata.id}\n`;
             info += `👥 *Wanachama:* ${participants.length}\n`;
             info += `👮 *Ma-Admin:* ${admins}\n`;

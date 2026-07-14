@@ -1,4 +1,3 @@
-const config = require("../settings/config");
 const { delay } = require("@whiskeysockets/baileys");
 
 module.exports = {
