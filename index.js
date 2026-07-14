@@ -21,6 +21,7 @@ const chalk = chalkImport.default || chalkImport;
 const config = require('./settings/config');
 const { smsg } = require('./library/serialize');
 const { getBotResponse } = require('./library/brain');
+const { getSettings } = require('./library/settingsStore');
 
 process.on('uncaughtException', (err) => {
     console.error(chalk.red('CRITICAL ERROR (Uncaught Exception):'), err);
@@ -121,6 +122,7 @@ async function startBot(number, io, onPairingCode) {
 
     activeSockets[sessionId] = sock;
     sock.decodeJid = decodeJidFactory();
+    sock.sessionId = sessionId;
 
     // --- Pairing code (web-driven instead of terminal prompt) ---
     if (!sock.authState?.creds?.registered) {
@@ -147,7 +149,11 @@ async function startBot(number, io, onPairingCode) {
         }
 
         if (connection === 'open') {
-            console.log(chalk.green(`✅ ${config.botName} (${sessionId}) connected!`));
+            // Make sure this number has its own settings, with itself as the
+            // owner number by default (this is what owner-only commands
+            // check against for this session).
+            const sessionSettings = getSettings(sessionId);
+            console.log(chalk.green(`✅ ${sessionSettings.botName} (${sessionId}) connected!`));
             if (io) io.emit('connected', { number: sessionId });
         }
 
@@ -183,16 +189,17 @@ async function startBot(number, io, onPairingCode) {
             const m = smsg(sock, mek);
             const body = m.body || '';
 
-            const isOwner = m.key.fromMe || config.ownerNumber?.includes(m.sender.split('@')[0]);
+            const settings = getSettings(sessionId);
+            const isOwner = m.key.fromMe || settings.ownerNumber === m.sender.split('@')[0];
 
             // --- AUTO VIEW / REACT STATUS ---
             if (m.chat === 'status@broadcast') {
                 try {
-                    if (config.autoViewStatus) {
+                    if (settings.autoViewStatus) {
                         await sock.readMessages([mek.key]);
                     }
-                    if (config.autoReactStatus) {
-                        const statusReactions = ['🔥', '💎', '💜', '❤️', '💙', '💚', '💖'];
+                    if (settings.autoReactStatus) {
+                        const statusReactions = settings.statusEmojis?.length ? settings.statusEmojis : ['🔥'];
                         const randomReaction = statusReactions[Math.floor(Math.random() * statusReactions.length)];
                         await sock.sendMessage(
                             'status@broadcast',
@@ -207,33 +214,34 @@ async function startBot(number, io, onPairingCode) {
             }
 
             // --- AUTO READ CHAT ---
-            if (config.autoReadChat) {
+            if (settings.autoReadChat) {
                 await sock.readMessages([mek.key]);
             }
 
             // --- AUTO TYPING / RECORDING ---
-            if (config.autoTyping) {
+            if (settings.autoTyping) {
                 await sock.sendPresenceUpdate('composing', m.chat);
             }
-            if (config.autoRecording) {
+            if (settings.autoRecording) {
                 await sock.sendPresenceUpdate('recording', m.chat);
             }
 
             // --- AUTO REACT NORMAL CHAT ---
-            if (config.autoReactChat && !m.isBaileys && !m.key.fromMe) {
-                const chatEmojis = ['😆', '😱', '😂', '🤫', '🤫'];
+            if (settings.autoReactChat && !m.isBaileys && !m.key.fromMe) {
+                const chatEmojis = settings.chatEmojis?.length ? settings.chatEmojis : ['😆'];
                 const randomEmoji = chatEmojis[Math.floor(Math.random() * chatEmojis.length)];
                 await sock.sendMessage(m.chat, { react: { text: randomEmoji, key: m.key } });
             }
 
             // --- AI TOGGLE ---
-            if (body === '.aion' && isOwner) {
+            const pfx = settings.prefix || '.';
+            if (body === `${pfx}aion` && isOwner) {
                 autoAi = true;
-                return await sock.sendMessage(m.chat, { text: '✅ *DarkX AI:* Auto-Reply is now ON!' }, { quoted: m });
+                return await sock.sendMessage(m.chat, { text: '✅ *DarkX-Ultra AI:* Auto-Reply is now ON!' }, { quoted: m });
             }
-            if (body === '.aioff' && isOwner) {
+            if (body === `${pfx}aioff` && isOwner) {
                 autoAi = false;
-                return await sock.sendMessage(m.chat, { text: '📴 *DarkX AI:* Auto-Reply is now OFF!' }, { quoted: m });
+                return await sock.sendMessage(m.chat, { text: '📴 *DarkX-Ultra AI:* Auto-Reply is now OFF!' }, { quoted: m });
             }
 
             // --- AI REPLY ---

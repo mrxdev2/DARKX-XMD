@@ -13,9 +13,11 @@ const path = require('path');
 const chalkImport = require('chalk');
 const chalk = chalkImport.default || chalkImport;
 
+const cors = require('cors');
 const config = require('./settings/config');
 const { resumeExistingSessions } = require('./index');
 const registerSocketHandlers = require('./Resources/socket/socket');
+const apiRoutes = require('./Resources/web/routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,9 +25,11 @@ const io = new Server(server, {
     cors: { origin: '*', methods: ['GET', 'POST'] },
 });
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'Resources', 'web')));
+app.use('/api', apiRoutes);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'Resources', 'web', 'index.html'));

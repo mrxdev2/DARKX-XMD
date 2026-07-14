@@ -1,7 +1,7 @@
 {
-  "name": "darkx-minbot",
+  "name": "darkx-ultra",
   "version": "1.0.0",
-  "description": "DarkX-minBot by MrX Dev",
+  "description": "DarkX-Ultra multi-device WhatsApp bot",
   "main": "start.js",
   "scripts": {
     "start": "node start.js"
@@ -20,7 +20,9 @@
     "ruhend-scraper": "^7.0.3",
     "fs-extra": "^11.2.0",
     "path": "^0.12.7",
-    "util": "^0.12.5"
+    "util": "^0.12.5",
+    "wa-sticker-formatter": "^4.4.4",
+    "cors": "^2.8.5"
   },
   "engines": {
     "node": ">=16.x"
